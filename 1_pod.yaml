@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Pod
+metadata:
+    labels:
+      app: express-k8
+    namespace: apps
+    spec:
+      nodeSelector:
+        name: apps
+      serviceAccountName: express-k8-sa
+      containers:
+      - name: server
+        image: renato270197/k8-express:v1
+        ports:
+        - name: default
+          containerPort: 3000
+        env:
+        - name: PORT
+          value: "3000"
+        - name: ENVIRONMENT
+          value: "dev"
+        readinessProbe:
+          grpc:
+            port: 7000
+        livenessProbe:
+          grpc:
+            port: 7000
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
